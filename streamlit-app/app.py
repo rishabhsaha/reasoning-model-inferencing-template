@@ -45,18 +45,27 @@ for message in st.session_state.messages:
 # st.markdown(deli_lead("Hello, how can I assist you today?"))
 
 if prompt := st.chat_input("What is up?"):
+    # if "memory" not in st.session_state:
+    #     st.session_state["memory"] = []
+
+    # st.session_state["memory"].append(prompt)
     call_api(prompt)
 
-if st.sidebar.button("Deli Lead"):
-    prompt = "As a Deli Lead, how do you manage your team effectively?"
+if st.sidebar.button("Fresh Associate"):
+    prompt = "As a Fresh Associate, I need to know the Fresh Production Plan in tabular format and 2 to 3 bullet points that would help me execute that plan appropriately provide the data and reasoning behind each action item?"
+
+    call_api(prompt)
+
+if st.sidebar.button("Deli Team Lead"):
+    prompt = "As a Fresh Lead,  I need to know the Fresh Production Plan in tabular format and 2 to 3 bullet points that would helpful in understanding the performance of our plan yesterday"
     call_api(prompt)
 
 
-if st.sidebar.button("Deli Associate"):
-    prompt = "As a Deli Associate, I need to know the Fresh Production Plan in tabular format and 2 to 3 bullet points that would help me execute that plan appropriately?"
-    call_api(prompt)
+if st.sidebar.button("Fresh Coach"):
+    prompt = """
+    As a Fresh Coach, I need to know the Plan vs. Actual vs. Waste per day and 2 to 3 bullet points that would help me understand how the rotisserie chicken production has performed over the last week and what my agenda should be when I do my walkthrough and handover at shift end? point out any anomalies in actuals production,  waste or actual sales.
+    """
 
-
-if st.sidebar.button("Deli Coach"):
-    prompt = "As a Deli Coach, I need to know the Fresh Production Plan and 2 to 3 bullet points that would help me understand how the rotissery chicken pruduction has performed yesterday and what my agenda should be when I do my walkthrough and handover at shift end?"
+    if "memory" in st.session_state:
+        prompt = f"{prompt} {st.session_state['memory'][-1]}"
     call_api(prompt)
