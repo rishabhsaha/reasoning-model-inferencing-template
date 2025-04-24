@@ -9,14 +9,14 @@ st.title("ChatGPT-like clone")
 # client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 if "markdown_content" not in st.session_state:
     # Load the Markdown file into session state
-    with open("../MarkDown_5260.md", "r", encoding="utf-8") as file:
+    with open("../reasoning/output/reasoningmodeloutput.md", "r", encoding="utf-8") as file:
         st.session_state["markdown_content"] = file.read()
 
 # Display the Markdown content
 # st.markdown(st.session_state["markdown_content"])
 
 if "openai_model" not in st.session_state:
-    st.session_state["openai_model"] = "gpt-3.5-turbo"
+    st.session_state["openai_model"] = "gpt-4.1"
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
