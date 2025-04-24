@@ -6,3 +6,4 @@ seaborn
 azure.ai.projects
 azure.identity
 openai
+dotenv

@@ -7,83 +7,19 @@ credential = DefaultAzureCredential()
 # Load environment variables
 load_dotenv("../.env")
 
-endpoint = os.getenv("ENDPOINT_URL")  
-deployment_name = os.getenv("DEPLOYMENT_NAME", "gpt-4.1")  
-subscription_key = os.getenv("O4MINI_API_KEY")  
+endpoint = os.getenv("ENDPOINT_URL")
+deployment_name = os.getenv("DEPLOYMENT_NAME", "gpt-4.1")
+subscription_key = os.getenv("O4MINI_API_KEY")
 
-# Initialize Azure OpenAI Service client with key-based authentication    
-client = AzureOpenAI(  
-    azure_endpoint=endpoint,  
-    api_key=subscription_key,  
+# Initialize Azure OpenAI Service client with key-based authentication
+client = AzureOpenAI(
+    azure_endpoint=endpoint,
+    api_key=subscription_key,
     api_version="2025-01-01-preview",
 )
 
 
-def deli_lead(prompt: str) -> str:
-    """
-    Sends a prompt to Azure OpenAI and returns the response.
-
-    Args:
-        prompt (str): The input prompt to send to Azure OpenAI.
-
-    Returns:
-        str: The response from Azure OpenAI.
-    """
-    try:
-
-
-        system_prompt = """
-        You are a helpful assistant that uses Azure OpenAI to answer user questions. You can provide information, answer queries, and assist with various tasks. Please respond to the user's prompt in a clear and concise manner.
-        """
-
-        # Send the prompt to Azure OpenAI
-        response = client.chat.completions.create(
-            deployment_id=deployment_name,
-            prompt=prompt,
-            max_tokens=100,
-            temperature=0.7
-        )
-
-        # Extract and return the response text
-        return response.choices[0].text.strip()
-
-    except Exception as e:
-        return f"An error occurred: {e}"
-
-
-def deli_associate(prompt: str) -> str:
-    """
-    Sends a prompt to Azure OpenAI and returns the response.
-
-    Args:
-        prompt (str): The input prompt to send to Azure OpenAI.
-
-    Returns:
-        str: The response from Azure OpenAI.
-    """
-    try:
-
-
-        system_prompt = """
-        You are a helpful assistant that uses Azure OpenAI to answer user questions. You can provide information, answer queries, and assist with various tasks. Please respond to the user's prompt in a clear and concise manner.
-        """
-
-        # Send the prompt to Azure OpenAI
-        response = client.chat.completions.create(
-            deployment_id=deployment_name,
-            prompt=prompt,
-            max_tokens=100,
-            temperature=0.7
-        )
-
-        # Extract and return the response text
-        return response.choices[0].text.strip()
-
-    except Exception as e:
-        return f"An error occurred: {e}"
-
-
-def deli_coach(prompt: str) -> str:
+def deli_lead(prompt: str, data: str):
     """
     Sends a prompt to Azure OpenAI and returns the response.
 
@@ -97,21 +33,34 @@ def deli_coach(prompt: str) -> str:
 
         system_prompt = """
         You are a helpful assistant that uses Azure OpenAI to answer user questions. You can provide information, answer queries, and assist with various tasks. Please respond to the user's prompt in a clear and concise manner.
+        Only respond with the answer to the question. Do not include any additional information or context.
         """
-
-        # Send the prompt to Azure OpenAI
+        promprt_data = f"""
+            ${prompt}
+            <context>
+            ${data}
+            </context>
+        """
+        # Construct the full prompt with system message and user input
         response = client.chat.completions.create(
-            deployment_id=deployment_name,
-            prompt=prompt,
-            max_tokens=100,
-            temperature=0.7
+            model=deployment_name,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": promprt_data}
+            ],
+            temperature=0.7,
+            stream=True
         )
+        # # Send the prompt to Azure OpenAI
+        # response = client.chat.completions.create(
+        #     deployment_id=deployment_name,
+        #     prompt=prompt,
+        #     max_tokens=100,
+        #     temperature=0.7
+        # )
 
         # Extract and return the response text
-        return response.choices[0].text.strip()
+        return response
 
     except Exception as e:
         return f"An error occurred: {e}"
-
-
-# Define the deployment name (replace with your deployment name)
